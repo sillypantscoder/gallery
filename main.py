@@ -23,8 +23,18 @@ class HttpResponse(typing.TypedDict):
 	headers: dict[str, str]
 	content: bytes
 
+def pq(path: str, q: str):
+	qpath = path.split("?")[0]
+	sp = qpath.split("/")[1:]
+	sq = q.split("/")[1:]
+	if len(sp) != len(sq): return False
+	for i in range(len(sp)):
+		if sq[i] == "*": continue
+		if sp[i] != sq[i]: return False
+	return True
+
 def get(path: str) -> HttpResponse:
-	if path == "/":
+	if pq(path, "/"):
 		return {
 			"status": 200,
 			"headers": {
@@ -32,7 +42,7 @@ def get(path: str) -> HttpResponse:
 			},
 			"content": read_file("index.html")
 		}
-	elif path == "/index.js":
+	if pq(path, "/index.js"):
 		return {
 			"status": 200,
 			"headers": {
@@ -40,7 +50,7 @@ def get(path: str) -> HttpResponse:
 			},
 			"content": read_file("index.js")
 		}
-	elif path == "/meta.json":
+	if pq(path, "/meta.json"):
 		return {
 			"status": 200,
 			"headers": {
@@ -48,41 +58,51 @@ def get(path: str) -> HttpResponse:
 			},
 			"content": read_file("meta.json")
 		}
-	elif path.startswith("/thumbnail/") and os.path.isfile("pictures/" + path[11:].replace(".", "") + ".png"):
-		img = pygame.image.load("pictures/" + path[11:].replace(".", "") + ".png")
-		maxsize = 150
-		scale = 1
-		size = img.get_size()
-		if size[0] > size[1]:
-			scale = maxsize / size[0]
-		else:
-			scale = maxsize / size[1]
-		result = io.BytesIO()
-		pygame.image.save(pygame.transform.scale(img, (size[0] * scale, size[1] * scale)), result, "thumbnail.png")
-		result.seek(0)
-		return {
-			"status": 200,
-			"headers": {
-				"Content-Type": "image/png"
-			},
-			"content": result.read()
-		}
-	elif path.startswith("/pictures/") and os.path.isfile(path[1:].replace(".", "") + ".png"):
-		return {
-			"status": 200,
-			"headers": {
-				"Content-Type": "image/png"
-			},
-			"content": read_file(path[1:].replace(".", "") + ".png")
-		}
-	else: # 404 page
-		return {
-			"status": 404,
-			"headers": {
-				"Content-Type": "text/html"
-			},
-			"content": b""
-		}
+	image_filename = "pictures/" + path.split("/")[2].replace(".", "").replace("/", "") + ".png"
+	if os.path.isfile(image_filename):
+		if pq(path, "/image/*/"):
+			return {
+				"status": 200,
+				"headers": {
+					"Content-Type": "text/html"
+				},
+				"content": read_file("image.html")
+			}
+		if pq(path, "/image/*/thumbnail.png"):
+			img = pygame.image.load(image_filename)
+			maxsize = 150
+			scale = 1
+			size = img.get_size()
+			if size[0] > size[1]:
+				scale = maxsize / size[0]
+			else:
+				scale = maxsize / size[1]
+			result = io.BytesIO()
+			pygame.image.save(pygame.transform.scale(img, (size[0] * scale, size[1] * scale)), result, "thumbnail.png")
+			result.seek(0)
+			return {
+				"status": 200,
+				"headers": {
+					"Content-Type": "image/png"
+				},
+				"content": result.read()
+			}
+		if pq(path, "/image/*/image.png"):
+			return {
+				"status": 200,
+				"headers": {
+					"Content-Type": "image/png"
+				},
+				"content": read_file(image_filename)
+			}
+	# 404 page
+	return {
+		"status": 404,
+		"headers": {
+			"Content-Type": "text/html"
+		},
+		"content": b""
+	}
 
 def post(path: str, body: bytes) -> HttpResponse:
 	if False: pass
