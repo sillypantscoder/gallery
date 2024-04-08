@@ -24,7 +24,6 @@ class HttpResponse(typing.TypedDict):
 	content: bytes
 
 def get(path: str) -> HttpResponse:
-	print(path)
 	if path == "/":
 		return {
 			"status": 200,
@@ -51,7 +50,7 @@ def get(path: str) -> HttpResponse:
 		}
 	elif path.startswith("/thumbnail/") and os.path.isfile("pictures/" + path[11:].replace(".", "") + ".png"):
 		img = pygame.image.load("pictures/" + path[11:].replace(".", "") + ".png")
-		maxsize = 200
+		maxsize = 150
 		scale = 1
 		size = img.get_size()
 		if size[0] > size[1]:
