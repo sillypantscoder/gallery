@@ -1,7 +1,8 @@
-# INIT STUFF
-
 from http.server import BaseHTTPRequestHandler, HTTPServer
 import typing
+import os
+import pygame
+import io
 
 def read_file(filename: str) -> bytes:
 	f = open(filename, "rb")
@@ -15,7 +16,7 @@ def write_file(filename: str, content: bytes):
 	f.close()
 
 hostName = "0.0.0.0"
-serverPort = 8074
+serverPort = 8072
 
 class HttpResponse(typing.TypedDict):
 	status: int
@@ -47,6 +48,33 @@ def get(path: str) -> HttpResponse:
 				"Content-Type": "application/json"
 			},
 			"content": read_file("meta.json")
+		}
+	elif path.startswith("/thumbnail/") and os.path.isfile("pictures/" + path[11:].replace(".", "") + ".png"):
+		img = pygame.image.load("pictures/" + path[11:].replace(".", "") + ".png")
+		maxsize = 200
+		scale = 1
+		size = img.get_size()
+		if size[0] > size[1]:
+			scale = maxsize / size[0]
+		else:
+			scale = maxsize / size[1]
+		result = io.BytesIO()
+		pygame.image.save(pygame.transform.scale(img, (size[0] * scale, size[1] * scale)), result, "thumbnail.png")
+		result.seek(0)
+		return {
+			"status": 200,
+			"headers": {
+				"Content-Type": "image/png"
+			},
+			"content": result.read()
+		}
+	elif path.startswith("/pictures/") and os.path.isfile(path[1:].replace(".", "") + ".png"):
+		return {
+			"status": 200,
+			"headers": {
+				"Content-Type": "image/png"
+			},
+			"content": read_file(path[1:].replace(".", "") + ".png")
 		}
 	else: # 404 page
 		return {

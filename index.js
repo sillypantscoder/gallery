@@ -9,7 +9,7 @@
 			// Structure
 			e.innerHTML = "<div><img></div>"
 			// Image
-			e.children[0].children[0].setAttribute("src", meta[i].filename)
+			e.children[0].setAttribute("style", "background-image: url(/thumbnail/" + meta[i].filename + ");")
 		}
 	})
 	x.send()
