@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<style>
+body {
+	margin: 0;
+}
+/* #grid {
+	display: grid;
+	grid-auto-columns: 20%;
+	grid-auto-rows: 20vw;
+} */
+#grid > div {
+	display: inline-block;
+	width: 20vw;
+	height: 20vw;
+}
+#grid > div > div {
+	display: block;
+	margin: 1em;
+	border: 1px solid black;
+	height: calc(100% - 2em);
+}
+		</style>
+	</head>
+	<body>
+		<header>hi</header>
+		<div id="grid"></div>
+		<script>window.addEventListener("error", (e) => alert(e.message))</script>
+		<script src="index.js"></script>
+	</body>
+</html>
