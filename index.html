@@ -40,6 +40,21 @@ header {
 	min-width: 100%;
 	min-height: 100%;
 }
+.card .hover-info {
+	position: absolute;
+	bottom: 0;
+	left: 0;
+	width: 100%;
+	background: #000A;
+	opacity: 0;
+	transition: opacity 0.2s ease-in-out;
+	color: white;
+	padding: 1em;
+	box-sizing: border-box;
+}
+.card:hover .hover-info {
+	opacity: 1;
+}
 		</style>
 	</head>
 	<body>

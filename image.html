@@ -68,6 +68,23 @@ header {
 	padding: 2em;
 	box-sizing: border-box;
 }
+#description {
+	display: block;
+	color: #888;
+	padding: 0.5em;
+	border-left: 0.5em solid #888;
+	font-style: italic;
+	margin: 1em;
+	margin-top: 0;
+}
+#description-empty {
+	display: block;
+	color: #AAA;
+	padding: 0.5em;
+	font-style: italic;
+	margin: 1em;
+	margin-top: 0;
+}
 		</style>
 	</head>
 	<body>
@@ -77,6 +94,7 @@ header {
 			--><div class="info">
 				<h1 id="title"></h1>
 				<p>Date: <span id="date"></span></p>
+				<p>Description:<span id="description"></span></p>
 			</div>
 		</div>
 		<script>window.addEventListener("error", (e) => alert(e.message))</script>

@@ -11,12 +11,14 @@
 				m.innerHTML = `<a class='card' href='image/${info.filename}/'></a>`
 				var e = m.children[0]
 				// Structure
-				e.innerHTML = "<div class='img-container'><img></div>"
+				e.innerHTML = "<div class='img-container'><img></div><div class='hover-info'></div>"
 				// Image
 				e.children[0].children[0].setAttribute("src", "/image/" + info.filename + "/thumbnail.png")
 				e.children[0].children[0].addEventListener("load", () => {
 					e.children[0].setAttribute("style", "opacity: 1;")
 				})
+				// Hover info
+				e.children[1].innerHTML = info.name
 			})(meta[i]);
 		}
 	})
