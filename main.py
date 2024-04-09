@@ -50,6 +50,14 @@ def get(path: str) -> HttpResponse:
 			},
 			"content": read_file("index.js")
 		}
+	if pq(path, "/image.js"):
+		return {
+			"status": 200,
+			"headers": {
+				"Content-Type": "text/javascript"
+			},
+			"content": read_file("image.js")
+		}
 	if pq(path, "/meta.json"):
 		return {
 			"status": 200,
