@@ -34,6 +34,7 @@ def pq(path: str, q: str):
 	return True
 
 def get(path: str) -> HttpResponse:
+	# print(path)
 	if pq(path, "/"):
 		return {
 			"status": 200,
@@ -66,43 +67,45 @@ def get(path: str) -> HttpResponse:
 			},
 			"content": read_file("meta.json")
 		}
-	image_filename = "pictures/" + path.split("/")[2].replace(".", "").replace("/", "") + ".png"
-	if os.path.isfile(image_filename):
-		if pq(path, "/image/*/"):
-			return {
-				"status": 200,
-				"headers": {
-					"Content-Type": "text/html"
-				},
-				"content": read_file("image.html")
-			}
-		if pq(path, "/image/*/thumbnail.png"):
-			img = pygame.image.load(image_filename)
-			maxsize = 150
-			scale = 1
-			size = img.get_size()
-			if size[0] > size[1]:
-				scale = maxsize / size[0]
-			else:
-				scale = maxsize / size[1]
-			result = io.BytesIO()
-			pygame.image.save(pygame.transform.scale(img, (size[0] * scale, size[1] * scale)), result, "thumbnail.png")
-			result.seek(0)
-			return {
-				"status": 200,
-				"headers": {
-					"Content-Type": "image/png"
-				},
-				"content": result.read()
-			}
-		if pq(path, "/image/*/image.png"):
-			return {
-				"status": 200,
-				"headers": {
-					"Content-Type": "image/png"
-				},
-				"content": read_file(image_filename)
-			}
+	try:
+		image_filename = "pictures/" + path.split("/")[2].replace(".", "").replace("/", "") + ".png"
+		if os.path.isfile(image_filename):
+			if pq(path, "/image/*/"):
+				return {
+					"status": 200,
+					"headers": {
+						"Content-Type": "text/html"
+					},
+					"content": read_file("image.html")
+				}
+			if pq(path, "/image/*/thumbnail.png"):
+				img = pygame.image.load(image_filename)
+				maxsize = 250
+				scale = 1
+				size = img.get_size()
+				if size[0] > size[1]:
+					scale = maxsize / size[0]
+				else:
+					scale = maxsize / size[1]
+				result = io.BytesIO()
+				pygame.image.save(pygame.transform.scale(img, (size[0] * scale, size[1] * scale)), result, "thumbnail.png")
+				result.seek(0)
+				return {
+					"status": 200,
+					"headers": {
+						"Content-Type": "image/png"
+					},
+					"content": result.read()
+				}
+			if pq(path, "/image/*/image.png"):
+				return {
+					"status": 200,
+					"headers": {
+						"Content-Type": "image/png"
+					},
+					"content": read_file(image_filename)
+				}
+	except: pass
 	# 404 page
 	return {
 		"status": 404,
